@@ -1,4 +1,5 @@
-"use client"
+"use client" // Refreshed for redeploy
+
 
 import { useState } from "react"
 import { Sidebar } from "@/components/Sidebar"
