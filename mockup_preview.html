@@ -1,0 +1,242 @@
+<<<<<<< HEAD
+<!-- Сохраняю в d:\Antigravity\mockup_preview.html -->
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>IntelBolt BI Dashboard Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #09090b;
+            color: #fafafa;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass {
+            background: rgba(24, 24, 27, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(39, 39, 42, 0.8);
+        }
+
+        .sidebar-item:hover {
+            background: rgba(79, 70, 229, 0.1);
+            color: #818cf8;
+        }
+
+        .active-item {
+            background: rgba(79, 70, 229, 0.2);
+            color: #818cf8;
+            border-right: 3px solid #6366f1;
+        }
+    </style>
+</head>
+
+<body class="h-screen flex overflow-hidden">
+
+    <!-- 1. SLEEK LEFT SIDEBAR (Навигация) -->
+    <aside class="w-64 glass flex flex-col p-4">
+        <div class="mb-10 px-2 flex items-center space-x-2">
+            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold">I</div>
+            <span class="text-xl font-bold tracking-tight">IntelBolt</span>
+        </div>
+        <nav class="space-y-1 flex-1">
+            <div class="sidebar-item active-item p-3 rounded-lg cursor-pointer transition-all">Overview</div>
+            <div class="sidebar-item p-3 rounded-lg cursor-pointer transition-all">Marketing (GA4)</div>
+            <div class="sidebar-item p-3 rounded-lg cursor-pointer transition-all">CRM & Sales</div>
+            <div class="sidebar-item p-3 rounded-lg cursor-pointer transition-all">Identity Reports</div>
+            <div class="sidebar-item p-3 rounded-lg cursor-pointer transition-all opacity-50">Telephony (Soon)</div>
+        </nav>
+        <div class="mt-auto p-2 text-xs text-zinc-500">© 2026 Admin Panel</div>
+    </aside>
+
+    <!-- 2. CENTRAL ANALYTICS AREA (Графики) -->
+    <main class="flex-1 overflow-y-auto p-8 space-y-6">
+        <header class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold">Analytics Overview</h1>
+            <div class="text-sm text-zinc-400">Jan 12, 2026 - Jan 19, 2026</div>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-3 gap-6">
+            <div class="glass p-6 rounded-2xl">
+                <div class="text-zinc-400 text-sm">Total Products</div>
+                <div class="text-2xl font-bold mt-1">12,839 <span
+                        class="text-emerald-500 text-sm font-normal">+11%</span></div>
+            </div>
+            <div class="glass p-6 rounded-2xl">
+                <div class="text-zinc-400 text-sm">Total Sales</div>
+                <div class="text-2xl font-bold mt-1">2,736,635 <span
+                        class="text-emerald-500 text-sm font-normal">+10%</span></div>
+            </div>
+            <div class="glass p-6 rounded-2xl">
+                <div class="text-zinc-400 text-sm">Revenue</div>
+                <div class="text-2xl font-bold mt-1">$32,839 <span
+                        class="text-emerald-500 text-sm font-normal">+9%</span></div>
+            </div>
+        </div>
+
+        <!-- Big Chart Placeholder -->
+        <div class="glass p-8 rounded-2xl h-80 flex flex-col justify-between">
+            <div class="font-semibold text-lg">Revenue Over Time</div>
+            <div class="flex-1 mt-4 flex items-end space-x-2">
+                <!-- Просто имитация баров -->
+                <div class="flex-1 bg-indigo-500/20 h-32 rounded-t-md"></div>
+                <div class="flex-1 bg-indigo-500/40 h-48 rounded-t-md"></div>
+                <div class="flex-1 bg-indigo-500/60 h-64 rounded-t-md"></div>
+                <div class="flex-1 bg-indigo-500/80 h-40 rounded-t-md border-t-2 border-indigo-400"></div>
+                <div class="flex-1 bg-indigo-500/30 h-52 rounded-t-md"></div>
+                <div class="flex-1 bg-indigo-500/50 h-72 rounded-t-md"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 3. RIGHT AI CHAT (Агент) -->
+    <aside class="w-80 glass flex flex-col border-l border-zinc-800">
+        <div class="p-4 border-b border-zinc-800 flex items-center space-x-3">
+            <div class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center">🤖</div>
+            <div>
+                <div class="font-bold text-sm">Агент-аналитик</div>
+                <div class="text-[10px] text-emerald-500 truncate">В сети (n8n API)</div>
+            </div>
+        </div>
+        <div class="flex-1 p-4 overflow-y-auto space-y-4 text-sm">
+            <div class="bg-zinc-800/50 p-3 rounded-2xl rounded-tl-none mr-8">Привет, Андрей! Я готов проанализировать
+                данные по лидам из AmoCRM. С чего начнем?</div>
+            <div class="bg-indigo-600/20 p-3 rounded-2xl rounded-tr-none ml-8 border border-indigo-500/30">Покажи
+                эффективность менеджеров за неделю.</div>
+            <div
+                class="bg-zinc-800/50 p-3 rounded-2xl rounded-tl-none mr-8 italic text-zinc-400 underline cursor-pointer">
+                Подгружаю view_managers_performance...</div>
+        </div>
+        <div class="p-4 border-t border-zinc-800">
+            <div class="bg-zinc-900 rounded-xl p-3 border border-zinc-700 text-zinc-500 text-xs text-zinc-300">Спроси
+                что-нибудь...</div>
+        </div>
+    </aside>
+
+</body>
+
+=======
+<!-- Сохраняю в d:\Antigravity\mockup_preview.html -->
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>IntelBolt BI Dashboard Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #09090b;
+            color: #fafafa;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass {
+            background: rgba(24, 24, 27, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(39, 39, 42, 0.8);
+        }
+
+        .sidebar-item:hover {
+            background: rgba(79, 70, 229, 0.1);
+            color: #818cf8;
+        }
+
+        .active-item {
+            background: rgba(79, 70, 229, 0.2);
+            color: #818cf8;
+            border-right: 3px solid #6366f1;
+        }
+    </style>
+</head>
+
+<body class="h-screen flex overflow-hidden">
+
+    <!-- 1. SLEEK LEFT SIDEBAR (Навигация) -->
+    <aside class="w-64 glass flex flex-col p-4">
+        <div class="mb-10 px-2 flex items-center space-x-2">
+            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold">I</div>
+            <span class="text-xl font-bold tracking-tight">IntelBolt</span>
+        </div>
+        <nav class="space-y-1 flex-1">
+            <div class="sidebar-item active-item p-3 rounded-lg cursor-pointer transition-all">Overview</div>
+            <div class="sidebar-item p-3 rounded-lg cursor-pointer transition-all">Marketing (GA4)</div>
+            <div class="sidebar-item p-3 rounded-lg cursor-pointer transition-all">CRM & Sales</div>
+            <div class="sidebar-item p-3 rounded-lg cursor-pointer transition-all">Identity Reports</div>
+            <div class="sidebar-item p-3 rounded-lg cursor-pointer transition-all opacity-50">Telephony (Soon)</div>
+        </nav>
+        <div class="mt-auto p-2 text-xs text-zinc-500">© 2026 Admin Panel</div>
+    </aside>
+
+    <!-- 2. CENTRAL ANALYTICS AREA (Графики) -->
+    <main class="flex-1 overflow-y-auto p-8 space-y-6">
+        <header class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold">Analytics Overview</h1>
+            <div class="text-sm text-zinc-400">Jan 12, 2026 - Jan 19, 2026</div>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-3 gap-6">
+            <div class="glass p-6 rounded-2xl">
+                <div class="text-zinc-400 text-sm">Total Products</div>
+                <div class="text-2xl font-bold mt-1">12,839 <span
+                        class="text-emerald-500 text-sm font-normal">+11%</span></div>
+            </div>
+            <div class="glass p-6 rounded-2xl">
+                <div class="text-zinc-400 text-sm">Total Sales</div>
+                <div class="text-2xl font-bold mt-1">2,736,635 <span
+                        class="text-emerald-500 text-sm font-normal">+10%</span></div>
+            </div>
+            <div class="glass p-6 rounded-2xl">
+                <div class="text-zinc-400 text-sm">Revenue</div>
+                <div class="text-2xl font-bold mt-1">$32,839 <span
+                        class="text-emerald-500 text-sm font-normal">+9%</span></div>
+            </div>
+        </div>
+
+        <!-- Big Chart Placeholder -->
+        <div class="glass p-8 rounded-2xl h-80 flex flex-col justify-between">
+            <div class="font-semibold text-lg">Revenue Over Time</div>
+            <div class="flex-1 mt-4 flex items-end space-x-2">
+                <!-- Просто имитация баров -->
+                <div class="flex-1 bg-indigo-500/20 h-32 rounded-t-md"></div>
+                <div class="flex-1 bg-indigo-500/40 h-48 rounded-t-md"></div>
+                <div class="flex-1 bg-indigo-500/60 h-64 rounded-t-md"></div>
+                <div class="flex-1 bg-indigo-500/80 h-40 rounded-t-md border-t-2 border-indigo-400"></div>
+                <div class="flex-1 bg-indigo-500/30 h-52 rounded-t-md"></div>
+                <div class="flex-1 bg-indigo-500/50 h-72 rounded-t-md"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 3. RIGHT AI CHAT (Агент) -->
+    <aside class="w-80 glass flex flex-col border-l border-zinc-800">
+        <div class="p-4 border-b border-zinc-800 flex items-center space-x-3">
+            <div class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center">🤖</div>
+            <div>
+                <div class="font-bold text-sm">Агент-аналитик</div>
+                <div class="text-[10px] text-emerald-500 truncate">В сети (n8n API)</div>
+            </div>
+        </div>
+        <div class="flex-1 p-4 overflow-y-auto space-y-4 text-sm">
+            <div class="bg-zinc-800/50 p-3 rounded-2xl rounded-tl-none mr-8">Привет, Андрей! Я готов проанализировать
+                данные по лидам из AmoCRM. С чего начнем?</div>
+            <div class="bg-indigo-600/20 p-3 rounded-2xl rounded-tr-none ml-8 border border-indigo-500/30">Покажи
+                эффективность менеджеров за неделю.</div>
+            <div
+                class="bg-zinc-800/50 p-3 rounded-2xl rounded-tl-none mr-8 italic text-zinc-400 underline cursor-pointer">
+                Подгружаю view_managers_performance...</div>
+        </div>
+        <div class="p-4 border-t border-zinc-800">
+            <div class="bg-zinc-900 rounded-xl p-3 border border-zinc-700 text-zinc-500 text-xs text-zinc-300">Спроси
+                что-нибудь...</div>
+        </div>
+    </aside>
+
+</body>
+
+>>>>>>> 72416267db177fa741cfff72773c10bf704f1e00
+</html>
