@@ -9,12 +9,13 @@ import { RevenueChart } from "@/components/RevenueChart"
 import { Calendar, ChevronDown, Filter, Download } from "lucide-react"
 
 export default function DashboardPage() {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [dateRange, setDateRange] = useState("Jan 12, 2026 - Jan 19, 2026")
 
   return (
     <div className="flex h-screen bg-zinc-950 text-zinc-50 overflow-hidden font-sans">
       {/* Sidebar Navigation */}
-      <Sidebar />
+      <Sidebar isCollapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-zinc-950 p-8 space-y-8 custom-scrollbar">
@@ -95,7 +96,7 @@ export default function DashboardPage() {
       </main>
 
       {/* Right AI Sidebar */}
-      <div className="relative z-50">
+      <div className="relative z-50 h-full flex-shrink-0">
         <AIChat />
       </div>
     </div>
