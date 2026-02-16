@@ -1,9 +1,7 @@
-"use client" // Refreshed for redeploy
-
+"use client"
 
 import { useState, useRef, useEffect } from "react"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Send, Loader2 } from "lucide-react"
@@ -26,22 +24,22 @@ export function AIChat() {
     ])
     const [input, setInput] = useState("")
     const [isLoading, setIsLoading] = useState(false)
-    const scrollAreaRef = useRef<HTMLDivElement>(null)
+    const scrollContainerRef = useRef<HTMLDivElement>(null)
 
     // Авто-скролл вниз при новых сообщениях
     useEffect(() => {
-        const scrollElement = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]')
-        if (scrollElement) {
-            scrollElement.scrollTop = scrollElement.scrollHeight
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight
         }
-    }, [messages])
+    }, [messages, isLoading])
 
     const sendMessage = async () => {
         if (!input.trim() || isLoading) return
 
+        const userText = input;
         const userMessage: Message = {
             role: "user",
-            text: input,
+            text: userText,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
 
@@ -50,38 +48,21 @@ export function AIChat() {
         setIsLoading(true)
 
         try {
-            const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL
-
-            if (!webhookUrl) {
-                throw new Error("Webhook URL не настроен")
-            }
-
-            // Создаём контроллер для таймаута (60 секунд)
-            const controller = new AbortController()
-            const timeoutId = setTimeout(() => controller.abort(), 60000)
+            const webhookUrl = "/api/chat"
 
             const response = await fetch(webhookUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    text: input,
-                    chatId: "dashboard_session_1" // Можно генерировать уникальный
-                }),
-                signal: controller.signal
+                    text: userText,
+                    chatId: "dashboard_session_1"
+                })
             })
-
-            clearTimeout(timeoutId)
 
             if (!response.ok) throw new Error("Ошибка связи с n8n")
 
-            // Временная отладка: смотрим, что именно пришло от n8n
-            const rawText = await response.text()
-            console.log("Raw response from n8n:", rawText)
+            const data = await response.json()
 
-            const data = JSON.parse(rawText)
-
-            // Пытаемся достать текст ответа. n8n может вернуть массив или объект.
-            // Обычно это { output: "текст" } или [ { output: "текст" } ]
             const agentText = Array.isArray(data)
                 ? (data[0]?.output || data[0]?.text || JSON.stringify(data[0]))
                 : (data.output || data.text || JSON.stringify(data))
@@ -106,7 +87,7 @@ export function AIChat() {
     }
 
     return (
-        <aside className="w-80 bg-zinc-950/40 backdrop-blur-xl border-l border-zinc-800 flex flex-col h-screen overflow-hidden sticky top-0">
+        <aside className="w-80 bg-zinc-950/40 backdrop-blur-xl border-l border-zinc-800 flex flex-col h-full overflow-hidden">
             <div className="p-4 border-b border-zinc-800 flex items-center space-x-3 bg-zinc-900/20 shrink-0">
                 <div className="relative">
                     <Avatar className="w-10 h-10 border border-indigo-500/30 ring-2 ring-indigo-500/10">
@@ -123,35 +104,36 @@ export function AIChat() {
                 </div>
             </div>
 
-            <ScrollArea className="flex-1 px-4 py-6" ref={scrollAreaRef}>
-                <div className="space-y-6">
-                    {messages.map((m, i) => (
-                        <div key={i} className={cn(
-                            "flex flex-col max-w-[90%] animate-in fade-in slide-in-from-bottom-2 duration-500",
-                            m.role === "user" ? "ml-auto items-end" : "items-start"
+            <div
+                className="flex-1 overflow-y-auto px-4 py-6 custom-scrollbar space-y-6"
+                ref={scrollContainerRef}
+            >
+                {messages.map((m, i) => (
+                    <div key={i} className={cn(
+                        "flex flex-col max-w-[90%] animate-in fade-in slide-in-from-bottom-2 duration-500",
+                        m.role === "user" ? "ml-auto items-end" : "items-start"
+                    )}>
+                        <div className={cn(
+                            "p-3 rounded-2xl text-[13px] leading-relaxed transition-all shadow-lg whitespace-pre-wrap",
+                            m.role === "agent"
+                                ? "bg-zinc-800/80 text-zinc-200 rounded-tl-none border border-zinc-700/50"
+                                : "bg-indigo-600/40 text-indigo-50 rounded-tr-none border border-indigo-500/30"
                         )}>
-                            <div className={cn(
-                                "p-3 rounded-2xl text-[13px] leading-relaxed transition-all shadow-lg",
-                                m.role === "agent"
-                                    ? "bg-zinc-800/80 text-zinc-200 rounded-tl-none border border-zinc-700/50"
-                                    : "bg-indigo-600/40 text-indigo-50 rounded-tr-none border border-indigo-500/30"
-                            )}>
-                                {m.text}
-                            </div>
-                            <span className="text-[9px] text-zinc-600 mt-1.5 px-1 font-mono">{m.time}</span>
+                            {m.text}
                         </div>
-                    ))}
-                    {isLoading && (
-                        <div className="flex flex-col items-start max-w-[90%] animate-pulse">
-                            <div className="bg-zinc-800/60 p-3 rounded-2xl rounded-tl-none border border-zinc-700/50 flex space-x-2">
-                                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" />
-                            </div>
+                        <span className="text-[9px] text-zinc-600 mt-1.5 px-1 font-mono">{m.time}</span>
+                    </div>
+                ))}
+                {isLoading && (
+                    <div className="flex flex-col items-start max-w-[90%] animate-pulse">
+                        <div className="bg-zinc-800/60 p-3 rounded-2xl rounded-tl-none border border-zinc-700/50 flex space-x-2">
+                            <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                            <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                            <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" />
                         </div>
-                    )}
-                </div>
-            </ScrollArea>
+                    </div>
+                )}
+            </div>
 
             <div className="p-4 border-t border-zinc-800 bg-zinc-950/80 backdrop-blur-md shrink-0">
                 <div className="flex items-center space-x-2">
