@@ -31,7 +31,7 @@ export async function GET() {
             SELECT 
                 SUM(sessions) as total_sessions
             FROM marketing_data
-            WHERE date = CURRENT_DATE
+            WHERE date = (SELECT MAX(date) FROM marketing_data)
         `);
         const totalSessions = parseInt(marketingRes.rows[0].total_sessions || '0');
 

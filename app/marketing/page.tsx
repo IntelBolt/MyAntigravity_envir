@@ -119,7 +119,11 @@ export default function MarketingPage() {
                             <div key={s.name} className="flex items-center gap-2 text-xs text-zinc-400">
                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
                                 <span className="truncate">{s.name}</span>
-                                <span className="ml-auto text-zinc-200 font-bold">{((s.value / data.stats[0].value.replace(/\D/g, '')) * 100).toFixed(0)}%</span>
+                                <span className="ml-auto text-zinc-200 font-bold">
+                                    {data.stats[0].value.replace(/\D/g, '') !== '0'
+                                        ? ((s.value / parseInt(data.stats[0].value.replace(/\D/g, ''))) * 100).toFixed(0)
+                                        : '0'}%
+                                </span>
                             </div>
                         ))}
                     </div>
