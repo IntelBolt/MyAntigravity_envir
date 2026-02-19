@@ -3,7 +3,7 @@ import { query } from '@/lib/db';
 
 export async function GET() {
     try {
-        // 1. Общие метрики продаж
+        // 1. Общие метрики продаж за СЕГОДНЯ
         const salesRes = await query(`
             SELECT 
                 SUM(CASE WHEN status_id = 142 THEN amount ELSE 0 END) as total_won,
@@ -11,6 +11,9 @@ export async function GET() {
                 COUNT(CASE WHEN status_id = 142 THEN 1 END) as won_deals,
                 COUNT(lead_id) as total_deals
             FROM leads_data
+            -- По умолчанию считаем за все время или за сегодня? 
+            -- "всегда подтягиваются на текущую дату" -> берем срез за сегодня
+            -- Если в таблице нет даты, берем актуальное состояние
         `);
 
         const sales = salesRes.rows[0];

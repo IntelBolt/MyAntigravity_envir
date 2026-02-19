@@ -19,14 +19,9 @@ export function DashboardHeader({
     subtitle,
     tag,
     tagColor = "indigo",
-    onDateChange
 }: DashboardHeaderProps) {
-    const [dateRange, setDateRange] = useState({
-        from: new Date(2026, 0, 12),
-        to: new Date(2026, 0, 19)
-    })
+    const today = new Date();
     const [copied, setCopied] = useState(false)
-    const [showDatePicker, setShowDatePicker] = useState(false)
 
     const handleCopyLink = async () => {
         try {
@@ -38,7 +33,7 @@ export function DashboardHeader({
         }
     }
 
-    const dateString = `${format(dateRange.from, "dd MMM yyyy", { locale: ru })} - ${format(dateRange.to, "dd MMM yyyy", { locale: ru })}`
+    const dateString = format(today, "dd MMMM yyyy", { locale: ru })
 
     return (
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center bg-zinc-900/10 backdrop-blur-md -m-8 mb-4 p-8 border-b border-zinc-800/50 gap-4">
@@ -52,50 +47,10 @@ export function DashboardHeader({
             </div>
 
             <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-4 duration-700">
-                {/* Date Range Selector */}
-                <div className="relative">
-                    <button
-                        onClick={() => setShowDatePicker(!showDatePicker)}
-                        className="flex items-center space-x-3 px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-xl text-zinc-300 hover:bg-zinc-800 hover:border-zinc-700 transition-all cursor-pointer group shadow-xl active:scale-95"
-                    >
-                        <CalendarIcon className={cn("w-4 h-4 group-hover:scale-110 transition-transform", `text-${tagColor}-400`)} />
-                        <span className="text-sm font-medium">{dateString}</span>
-                        <ChevronDown className={cn("w-4 h-4 text-zinc-600 transition-transform", showDatePicker && "rotate-180")} />
-                    </button>
-
-                    {showDatePicker && (
-                        <div className="absolute top-full right-0 mt-2 p-4 bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl z-[9999] w-64 animate-in fade-in zoom-in-95" onMouseLeave={() => setShowDatePicker(false)}>
-                            <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] uppercase text-zinc-500 font-bold">Начало</label>
-                                    <input
-                                        type="date"
-                                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-sm text-zinc-200 outline-none focus:ring-1 focus:ring-indigo-500"
-                                        value={format(dateRange.from, 'yyyy-MM-dd')}
-                                        onChange={(e) => setDateRange(prev => ({ ...prev, from: new Date(e.target.value) }))}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] uppercase text-zinc-500 font-bold">Конец</label>
-                                    <input
-                                        type="date"
-                                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-2 text-sm text-zinc-200 outline-none focus:ring-1 focus:ring-indigo-500"
-                                        value={format(dateRange.to, 'yyyy-MM-dd')}
-                                        onChange={(e) => setDateRange(prev => ({ ...prev, to: new Date(e.target.value) }))}
-                                    />
-                                </div>
-                                <button
-                                    onClick={() => {
-                                        setShowDatePicker(false)
-                                        onDateChange?.(dateRange)
-                                    }}
-                                    className="w-full py-2 bg-indigo-600 rounded-lg text-sm font-bold hover:bg-indigo-500 transition-colors"
-                                >
-                                    Применить
-                                </button>
-                            </div>
-                        </div>
-                    )}
+                {/* Fixed Today Display */}
+                <div className="flex items-center space-x-3 px-4 py-2.5 bg-zinc-900/60 border border-zinc-800 rounded-xl text-zinc-300 shadow-xl">
+                    <CalendarIcon className={cn("w-4 h-4", `text-${tagColor}-400`)} />
+                    <span className="text-sm font-medium">{dateString}</span>
                 </div>
 
                 <div className="h-8 w-[1px] bg-zinc-800 mx-1" />

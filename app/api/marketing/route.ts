@@ -3,7 +3,7 @@ import { query } from '@/lib/db';
 
 export async function GET() {
     try {
-        // 1. Общие метрики маркетинга
+        // 1. Общие метрики маркетинга за СЕГОДНЯ
         const metricsRes = await query(`
             SELECT 
                 SUM(sessions) as total_sessions,
@@ -11,20 +11,20 @@ export async function GET() {
                 AVG(session_duration) as avg_duration,
                 SUM(event_count) as total_events
             FROM marketing_data
-            WHERE date >= NOW() - INTERVAL '30 days'
+            WHERE date = CURRENT_DATE
         `);
 
-        const metrics = metricsRes.rows[0];
+        const metrics = metricsRes.rows[0] || { total_sessions: 0, total_conversions: 0, avg_duration: 0, total_events: 0 };
         const convRate = metrics.total_sessions > 0 ? (metrics.total_conversions / metrics.total_sessions) * 100 : 0;
 
-        // 2. Тренд по дням (Сессии и Конверсии)
+        // 2. Тренд за последние 7 дней (включая сегодня)
         const dailyTrendRes = await query(`
             SELECT 
                 date,
                 SUM(sessions) as sessions,
                 SUM(conversions) as conversions
             FROM marketing_data
-            WHERE date >= NOW() - INTERVAL '30 days'
+            WHERE date >= CURRENT_DATE - INTERVAL '7 days'
             GROUP BY date
             ORDER BY date ASC
         `);

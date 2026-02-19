@@ -16,7 +16,7 @@ export default function MarketingPage() {
     useEffect(() => {
         async function fetchData() {
             try {
-                setLoading(true)
+                if (!data) setLoading(true)
                 const response = await fetch('/api/marketing')
                 if (!response.ok) throw new Error('Failed to fetch marketing stats')
                 const result = await response.json()
@@ -28,9 +28,12 @@ export default function MarketingPage() {
             }
         }
         fetchData()
+
+        const interval = setInterval(fetchData, 30 * 60 * 1000)
+        return () => clearInterval(interval)
     }, [])
 
-    if (loading) {
+    if (loading && !data) {
         return (
             <div className="flex h-full items-center justify-center">
                 <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />

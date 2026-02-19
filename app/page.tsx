@@ -29,10 +29,15 @@ export default function DashboardPage() {
         setLoading(false)
       }
     }
+
     fetchData()
+
+    // Ежедневное (в данном случае частое для актуальности) автообновление
+    const interval = setInterval(fetchData, 30 * 60 * 1000) // каждые 30 минут
+    return () => clearInterval(interval)
   }, [])
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -63,7 +68,6 @@ export default function DashboardPage() {
         subtitle={`Привет, Андрей. Вот актуальные данные по твоему бизнесу.`}
         tag="Live Intelligence"
         tagColor="indigo"
-        onDateChange={(range) => console.log('Date range changed:', range)}
       />
 
       {error && (

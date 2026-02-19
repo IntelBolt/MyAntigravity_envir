@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 
+export const revalidate = 0;
+
 export async function GET() {
     try {
         // 1. Общая статистика по продажам из представления производительности менеджеров
@@ -29,7 +31,7 @@ export async function GET() {
             SELECT 
                 SUM(sessions) as total_sessions
             FROM marketing_data
-            WHERE sessions > 0
+            WHERE date = CURRENT_DATE
         `);
         const totalSessions = parseInt(marketingRes.rows[0].total_sessions || '0');
 
