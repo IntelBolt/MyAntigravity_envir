@@ -9,5 +9,4 @@ SELECT
     deals_won as deals,
     deals_change_pct as deal_change
 FROM view_weekly_performance
-ORDER BY week_start DESC
-LIMIT 5;
+ORDER BY week_start DESC;

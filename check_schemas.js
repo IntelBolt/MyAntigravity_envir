@@ -1,0 +1,27 @@
+
+const { Pool } = require('pg');
+require('dotenv').config({ path: '.env.local' });
+
+const pool = new Pool({
+    host: process.env.POSTGRES_HOST,
+    port: parseInt(process.env.POSTGRES_PORT || '5432'),
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DATABASE,
+    ssl: false,
+});
+
+async function checkSchemas() {
+    try {
+        const client = await pool.connect();
+        const res = await client.query("SELECT schema_name FROM information_schema.schemata");
+        console.log('Schemas:', res.rows.map(r => r.schema_name).join(', '));
+        client.release();
+    } catch (err) {
+        console.error('Error:', err.message);
+    } finally {
+        await pool.end();
+    }
+}
+
+checkSchemas();

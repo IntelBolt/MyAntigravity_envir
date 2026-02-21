@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { KPICard } from "@/components/KPICard"
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, Legend, LineChart, Line } from "recharts"
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LineChart, Line } from "recharts"
 import { Trophy, Target, TrendingUp, Users, Loader2 } from "lucide-react"
 import { DashboardHeader } from "@/components/DashboardHeader"
 
@@ -11,12 +11,12 @@ const COLORS = ['#10b981', '#6366f1', '#f59e0b', '#ef4444', '#8b5cf6'];
 export default function SalesPage() {
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState<any>(null)
-    const [error, setError] = useState<string | null>(null)
+    const [, setError] = useState<string | null>(null) // Used just for completion, but removed error var
 
     useEffect(() => {
-        async function fetchData() {
+        async function fetchData(isInitial = false) {
             try {
-                if (!data) setLoading(true)
+                if (isInitial) setLoading(true)
                 const response = await fetch('/api/sales')
                 if (!response.ok) throw new Error('Failed to fetch sales stats')
                 const result = await response.json()
@@ -24,12 +24,13 @@ export default function SalesPage() {
             } catch (err: any) {
                 setError(err.message)
             } finally {
-                setLoading(false)
+                if (isInitial) setLoading(false)
             }
         }
-        fetchData()
 
-        const interval = setInterval(fetchData, 30 * 60 * 1000)
+        fetchData(true)
+
+        const interval = setInterval(() => fetchData(false), 30 * 60 * 1000)
         return () => clearInterval(interval)
     }, [])
 

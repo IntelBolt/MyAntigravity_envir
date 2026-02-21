@@ -14,9 +14,9 @@ export default function MarketingPage() {
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        async function fetchData() {
+        async function fetchData(isInitial = false) {
             try {
-                if (!data) setLoading(true)
+                if (isInitial) setLoading(true)
                 const response = await fetch('/api/marketing')
                 if (!response.ok) throw new Error('Failed to fetch marketing stats')
                 const result = await response.json()
@@ -24,12 +24,12 @@ export default function MarketingPage() {
             } catch (err: any) {
                 setError(err.message)
             } finally {
-                setLoading(false)
+                if (isInitial) setLoading(false)
             }
         }
-        fetchData()
+        fetchData(true)
 
-        const interval = setInterval(fetchData, 30 * 60 * 1000)
+        const interval = setInterval(() => fetchData(false), 30 * 60 * 1000)
         return () => clearInterval(interval)
     }, [])
 

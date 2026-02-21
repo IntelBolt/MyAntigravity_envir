@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 
+export const revalidate = 0;
+
 export async function GET() {
     try {
         // 1. Общие метрики продаж за СЕГОДНЯ

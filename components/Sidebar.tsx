@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { BarChart3, PieChart, Users, Fingerprint, Phone, LayoutDashboard, ChevronLeft, ChevronRight } from "lucide-react"
+import { BarChart3, Users, Fingerprint, Phone, LayoutDashboard, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 

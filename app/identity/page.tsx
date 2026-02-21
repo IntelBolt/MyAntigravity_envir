@@ -11,12 +11,12 @@ const COLORS = ['#8b5cf6', '#6366f1', '#ec4899', '#f43f5e', '#f59e0b'];
 export default function IdentityPage() {
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState<any>(null)
-    const [error, setError] = useState<string | null>(null)
+    const [, setError] = useState<string | null>(null) // removed unused error var
 
     useEffect(() => {
-        async function fetchData() {
+        async function fetchData(isInitial = false) {
             try {
-                if (!data) setLoading(true)
+                if (isInitial) setLoading(true)
                 const response = await fetch('/api/identity')
                 if (!response.ok) throw new Error('Failed to fetch identity stats')
                 const result = await response.json()
@@ -24,12 +24,13 @@ export default function IdentityPage() {
             } catch (err: any) {
                 setError(err.message)
             } finally {
-                setLoading(false)
+                if (isInitial) setLoading(false)
             }
         }
-        fetchData()
 
-        const interval = setInterval(fetchData, 30 * 60 * 1000)
+        fetchData(true)
+
+        const interval = setInterval(() => fetchData(false), 30 * 60 * 1000)
         return () => clearInterval(interval)
     }, [])
 
