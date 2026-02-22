@@ -15,12 +15,12 @@ async function checkView() {
     try {
         const client = await pool.connect();
 
-        console.log('--- Current definition of view_weekly_performance in DB ---');
-        const res1 = await client.query("SELECT definition FROM pg_views WHERE viewname = 'view_weekly_performance'");
+        console.log('--- Current definition of view_mega_report in DB ---');
+        const res1 = await client.query("SELECT definition FROM pg_views WHERE viewname = 'view_mega_report'");
         console.log(res1.rows[0]?.definition || 'View not found');
 
-        console.log('\n--- Current definition of view_ai_summary in DB ---');
-        const res2 = await client.query("SELECT definition FROM pg_views WHERE viewname = 'view_ai_summary'");
+        console.log('\n--- Current definition of view_full_identity_report in DB ---');
+        const res2 = await client.query("SELECT definition FROM pg_views WHERE viewname = 'view_full_identity_report'");
         console.log(res2.rows[0]?.definition || 'View not found');
 
         client.release();
