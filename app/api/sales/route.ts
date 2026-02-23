@@ -3,9 +3,15 @@ import { query } from '@/lib/db';
 
 export const revalidate = 0;
 
-export async function GET() {
+const DEFAULT_CLIENT_ID = 10234;
+
+export async function GET(request: Request) {
+    const { searchParams } = new URL(request.url);
+    const clientIdParam = searchParams.get('clientId');
+    const clientId = clientIdParam ? parseInt(clientIdParam) : DEFAULT_CLIENT_ID;
+
     try {
-        // 1. Общие метрики продаж за СЕГОДНЯ
+        // 1. Общие метрики продаж для конкретного клиента
         const salesRes = await query(`
             SELECT 
                 SUM(CASE WHEN status_id = 142 THEN amount ELSE 0 END) as total_won,
@@ -13,26 +19,25 @@ export async function GET() {
                 COUNT(CASE WHEN status_id = 142 THEN 1 END) as won_deals,
                 COUNT(lead_id) as total_deals
             FROM leads_data
-            -- По умолчанию считаем за все время или за сегодня? 
-            -- "всегда подтягиваются на текущую дату" -> берем срез за сегодня
-            -- Если в таблице нет даты, берем актуальное состояние
-        `);
+            WHERE client_id = $1
+        `, [clientId]);
 
-        const sales = salesRes.rows[0];
+        const sales = salesRes.rows[0] || { total_won: 0, total_lost: 0, won_deals: 0, total_deals: 0 };
         const winRate = sales.total_deals > 0 ? (sales.won_deals / sales.total_deals) * 100 : 0;
 
-        // 2. Распределение по статусам (Funnel)
+        // 2. Распределение по статусам (Funnel) для конкретного клиента
         const statusDistRes = await query(`
             SELECT 
                 status_id,
                 COUNT(*) as count,
                 SUM(amount) as total_amount
             FROM leads_data
+            WHERE client_id = $1
             GROUP BY status_id
             ORDER BY count DESC
-        `);
+        `, [clientId]);
 
-        // 3. Производительность менеджеров (Leaderboard)
+        // 3. Производительность менеджеров клиента
         const managersRes = await query(`
             SELECT 
                 manager_name,
@@ -40,19 +45,20 @@ export async function GET() {
                 deals_won,
                 actual_revenue
             FROM view_managers_performance
+            WHERE client_id = $1
             ORDER BY actual_revenue DESC
-        `);
+        `, [clientId]);
 
-        // 4. Тренд продаж (Won Amount по датам создания - для примера используем дату из leads_data)
-        // Если в leads_data нет даты, используем агрегацию из final_analytics_report
+        // 4. Тренд продаж для конкретного клиента
         const salesTrendRes = await query(`
             SELECT 
                 report_date as date,
                 SUM(CASE WHEN status_id = 142 THEN revenue ELSE 0 END) as won
             FROM final_analytics_report
+            WHERE client_id = $1
             GROUP BY report_date
             ORDER BY report_date ASC
-        `);
+        `, [clientId]);
 
         return NextResponse.json({
             stats: [

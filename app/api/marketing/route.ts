@@ -3,9 +3,15 @@ import { query } from '@/lib/db';
 
 export const revalidate = 0;
 
-export async function GET() {
+const DEFAULT_CLIENT_ID = 10234;
+
+export async function GET(request: Request) {
+    const { searchParams } = new URL(request.url);
+    const clientIdParam = searchParams.get('clientId');
+    const clientId = clientIdParam ? parseInt(clientIdParam) : DEFAULT_CLIENT_ID;
+
     try {
-        // 1. Общие метрики маркетинга за СЕГОДНЯ (или за последний доступный день)
+        // 1. Общие метрики маркетинга за СЕГОДНЯ (или за последний доступный день клиента)
         const metricsRes = await query(`
             SELECT 
                 SUM(sessions) as total_sessions,
@@ -13,52 +19,51 @@ export async function GET() {
                 AVG(session_duration) as avg_duration,
                 SUM(event_count) as total_events
             FROM marketing_data
-            WHERE date = (SELECT MAX(date) FROM marketing_data)
-        `);
+            WHERE client_id = $1 AND date = (SELECT MAX(date) FROM marketing_data WHERE client_id = $1)
+        `, [clientId]);
 
         const metrics = metricsRes.rows[0] || { total_sessions: 0, total_conversions: 0, avg_duration: 0, total_events: 0 };
 
-        // Handle potential nulls from SUM() outputs when no rows match
         const totalSessions = parseInt(metrics.total_sessions || 0);
         const totalConversions = parseInt(metrics.total_conversions || 0);
         const avgDuration = Math.round(metrics.avg_duration || 0);
         const convRate = totalSessions > 0 ? (totalConversions / totalSessions) * 100 : 0;
 
-        // 2. Тренд за последние 7 дней (включая сегодня)
+        // 2. Тренд за последние 7 дней (включая сегодня) для конкретного клиента
         const dailyTrendRes = await query(`
             SELECT 
                 date::date as date,
                 SUM(sessions) as sessions,
                 SUM(conversions) as conversions
             FROM marketing_data
-            WHERE date >= (SELECT MAX(date) FROM marketing_data) - INTERVAL '7 days'
+            WHERE client_id = $1 AND date >= (SELECT MAX(date) FROM marketing_data WHERE client_id = $1) - INTERVAL '7 days'
             GROUP BY 1
             ORDER BY 1 ASC
-        `);
+        `, [clientId]);
 
-        // 3. Топ источников (берём за все время для контекста, если за сегодня пусто)
+        // 3. Топ источников для конкретного клиента
         const topSourcesRes = await query(`
             SELECT 
                 source as name,
                 SUM(sessions) as value
             FROM marketing_data
-            WHERE sessions > 0
+            WHERE client_id = $1 AND sessions > 0
             GROUP BY source
             ORDER BY value DESC
             LIMIT 5
-        `);
+        `, [clientId]);
 
-        // 4. Популярные страницы
+        // 4. Популярные страницы для конкретного клиента
         const topPagesRes = await query(`
             SELECT 
                 page_path as name,
                 SUM(sessions) as value
             FROM marketing_data
-            WHERE page_path IS NOT NULL AND page_path != '' AND sessions > 0
+            WHERE client_id = $1 AND page_path IS NOT NULL AND page_path != '' AND sessions > 0
             GROUP BY page_path
             ORDER BY value DESC
             LIMIT 5
-        `);
+        `, [clientId]);
 
         return NextResponse.json({
             stats: [

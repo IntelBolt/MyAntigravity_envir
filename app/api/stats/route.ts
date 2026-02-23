@@ -3,10 +3,17 @@ import { query } from '@/lib/db';
 
 export const revalidate = 0;
 
-export async function GET() {
+// Эталонный ID для тестирования, пока нет системы авторизации
+const DEFAULT_CLIENT_ID = 10234;
+
+export async function GET(request: Request) {
+    const { searchParams } = new URL(request.url);
+    const clientIdParam = searchParams.get('clientId');
+    const clientId = clientIdParam ? parseInt(clientIdParam) : DEFAULT_CLIENT_ID;
+
     try {
         // 1. Общая статистика по продажам из представления производительности менеджеров
-        // Здесь мы берем агрегированные данные по всем менеджерам
+        // Фильтруем по client_id для изоляции данных в SaaS-режиме
         const salesStatsRes = await query(`
             SELECT 
                 SUM(total_leads_in_work) as total_leads,
@@ -14,38 +21,38 @@ export async function GET() {
                 SUM(deals_won) as won_count,
                 SUM(actual_revenue) as total_won
             FROM view_managers_performance
-        `);
+            WHERE client_id = $1
+        `, [clientId]);
 
-        const salesStats = salesStatsRes.rows[0];
+        const salesStats = salesStatsRes.rows[0] || { total_won: 0, total_potential: 0, won_count: 0, total_leads: 0 };
         const totalWon = parseFloat(salesStats.total_won || '0');
         const totalPotential = parseFloat(salesStats.total_potential || '0');
         const wonCount = parseInt(salesStats.won_count || '0');
         const totalLeads = parseInt(salesStats.total_leads || '0');
 
-        // Считаем Win Rate (процент выигранных сделок от общего числа завершенных или в работе)
-        // Для простоты: выигранные / всего сделок
+        // Считаем Win Rate
         const winRate = totalLeads > 0 ? (wonCount / totalLeads) * 100 : 0;
 
-        // 2. Статистика по маркетингу (Sessions)
+        // 2. Статистика по маркетингу (Sessions) за последний доступный день конкретного клиента
         const marketingRes = await query(`
             SELECT 
                 SUM(sessions) as total_sessions
             FROM marketing_data
-            WHERE date = (SELECT MAX(date) FROM marketing_data)
-        `);
-        const totalSessions = parseInt(marketingRes.rows[0].total_sessions || '0');
+            WHERE client_id = $1 AND date = (SELECT MAX(date) FROM marketing_data WHERE client_id = $1)
+        `, [clientId]);
+        const totalSessions = parseInt(marketingRes.rows[0]?.total_sessions || '0');
 
         // 3. Данные для графиков (Daily Sessions vs Revenue)
-        // Группируем по дням из сводного отчета
         const chartDataRes = await query(`
             SELECT 
                 report_date as date,
                 SUM(CASE WHEN sessions IS NOT NULL THEN sessions ELSE 0 END) as sessions,
                 SUM(CASE WHEN status_id = 142 THEN revenue ELSE 0 END) as won_revenue
             FROM final_analytics_report
+            WHERE client_id = $1
             GROUP BY report_date
             ORDER BY report_date ASC
-        `);
+        `, [clientId]);
 
         const chartData = chartDataRes.rows.map((row: any) => ({
             name: new Date(row.date).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }),
@@ -53,28 +60,28 @@ export async function GET() {
             sessions: parseInt(row.sessions || '0')
         }));
 
-        // 4. Топ источников трафика
+        // 4. Топ источников трафика для клиента
         const trafficSourcesRes = await query(`
             SELECT 
                 source,
                 SUM(sessions) as value
             FROM marketing_data
-            WHERE sessions > 0
+            WHERE client_id = $1 AND sessions > 0
             GROUP BY source
             ORDER BY value DESC
             LIMIT 5
-        `);
+        `, [clientId]);
 
-        // 5. Рейтинг менеджеров
+        // 5. Рейтинг менеджеров клиента
         const managersRes = await query(`
             SELECT 
                 manager_name as name,
                 actual_revenue as revenue,
                 deals_won as deals
             FROM view_managers_performance
-            WHERE actual_revenue > 0 OR total_leads_in_work > 0
+            WHERE client_id = $1 AND (actual_revenue > 0 OR total_leads_in_work > 0)
             ORDER BY actual_revenue DESC
-        `);
+        `, [clientId]);
 
         return NextResponse.json({
             stats: [
