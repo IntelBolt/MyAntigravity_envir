@@ -2,6 +2,7 @@ CREATE OR REPLACE VIEW view_weekly_performance AS
 WITH weekly_stats AS (
     SELECT 
         date_trunc('week', report_date)::date as week_start,
+        client_id,
         SUM(sessions) as sessions,
         COUNT(DISTINCT google_client_id) as users,
         COUNT(CASE WHEN status_id = 142 THEN 1 END) as deals_won,
@@ -9,18 +10,19 @@ WITH weekly_stats AS (
         COUNT(lead_name) as total_leads,
         SUM(revenue) as total_potential_revenue
     FROM final_analytics_report
-    GROUP BY 1
+    GROUP BY 1, 2
 ),
 comparison AS (
     SELECT 
         *,
-        LAG(sessions) OVER (ORDER BY week_start) as prev_sessions,
-        LAG(revenue_won) OVER (ORDER BY week_start) as prev_revenue,
-        LAG(deals_won) OVER (ORDER BY week_start) as prev_deals
+        LAG(sessions) OVER (PARTITION BY client_id ORDER BY week_start) as prev_sessions,
+        LAG(revenue_won) OVER (PARTITION BY client_id ORDER BY week_start) as prev_revenue,
+        LAG(deals_won) OVER (PARTITION BY client_id ORDER BY week_start) as prev_deals
     FROM weekly_stats
 )
 SELECT 
     week_start,
+    client_id,
     sessions,
     COALESCE(prev_sessions, 0) as prev_sessions,
     ROUND(CASE WHEN prev_sessions > 0 THEN ((sessions - prev_sessions)::numeric / prev_sessions * 100) ELSE 0 END, 2) as sessions_change_pct,

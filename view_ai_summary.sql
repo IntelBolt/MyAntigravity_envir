@@ -2,6 +2,7 @@ CREATE OR REPLACE VIEW view_ai_summary AS
 SELECT 
     'Weekly Performance'::text as metric_group,
     week_start::text as period,
+    client_id,
     sessions,
     sessions_change_pct as sess_change,
     revenue_won as revenue,

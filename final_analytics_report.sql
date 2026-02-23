@@ -11,7 +11,7 @@ SELECT COALESCE((l.created_at)::date, m.date) AS report_date,
     l.name AS lead_name,
     l.amount AS revenue,
     l.status_id,
-    l.google_client_id
+    l.google_client_id,
+    COALESCE(l.client_id, m.client_id) AS client_id
 FROM (marketing_data m
     FULL JOIN leads_data l ON ((m.google_client_id = l.google_client_id)));
--- Removed WHERE filter for client_name = 'Тест' to include all data
