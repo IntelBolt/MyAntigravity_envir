@@ -20,6 +20,7 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
     const pathname = usePathname()
+    const appName = process.env.NEXT_PUBLIC_APP_NAME || "IntelBolt"
 
     return (
         <aside className={cn(
@@ -30,11 +31,25 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                 "mb-10 px-2 flex items-center space-x-2 transition-all duration-300",
                 isCollapsed && "justify-center"
             )}>
-                <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20 shrink-0">
-                    I
+                <div className="w-9 h-9 relative flex items-center justify-center shrink-0">
+                    {/* Попытка загрузить клиентское лого, если оно есть в public/client_logo.png */}
+                    <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20 overflow-hidden">
+                        <img
+                            src="/client_logo.png"
+                            alt="Logo"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                                // Если картинка не найдена, показываем первую букву названия
+                                (e.target as HTMLImageElement).style.display = 'none';
+                                (e.target as HTMLImageElement).parentElement!.innerText = appName.charAt(0);
+                            }}
+                        />
+                    </div>
                 </div>
                 {!isCollapsed && (
-                    <span className="text-xl font-bold tracking-tight text-zinc-100 animate-in fade-in duration-300">IntelBolt</span>
+                    <span className="text-xl font-bold tracking-tight text-zinc-100 animate-in fade-in duration-300">
+                        {appName}
+                    </span>
                 )}
             </div>
 

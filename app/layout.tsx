@@ -13,9 +13,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const appName = process.env.NEXT_PUBLIC_APP_NAME || "IntelBolt";
+
 export const metadata: Metadata = {
-  title: "IntelBolt BI Dashboard",
-  description: "IntelBolt Business Intelligence Dashboard",
+  title: `${appName} BI Dashboard`,
+  description: `${appName} Business Intelligence Dashboard`,
 };
 
 export default function RootLayout({
