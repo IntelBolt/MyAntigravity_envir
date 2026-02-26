@@ -1,13 +1,14 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { BarChart3, Users, Fingerprint, Phone, LayoutDashboard, ChevronLeft, ChevronRight } from "lucide-react"
+import { BarChart3, Users, Fingerprint, Phone, LayoutDashboard, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 const navItems = [
     { name: "Overview", icon: LayoutDashboard, href: "/" },
     { name: "Marketing (GA4)", icon: BarChart3, href: "/marketing" },
+    { name: "Marketplaces", icon: ShoppingBag, href: "/marketplaces" },
     { name: "CRM & Sales", icon: Users, href: "/sales" },
     { name: "Identity Reports", icon: Fingerprint, href: "/identity" },
     { name: "Telephony (Soon)", icon: Phone, href: "#", disabled: true },

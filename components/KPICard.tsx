@@ -6,7 +6,7 @@ interface KPICardProps {
     label: string
     value: string | number
     trend: string
-    trendType?: "up" | "down"
+    trendType?: "up" | "down" | "neutral"
     icon?: LucideIcon
 }
 
@@ -31,10 +31,12 @@ export function KPICard({ label, value, trend, trendType = "up", icon: Icon }: K
                         "flex items-center space-x-1 px-2 py-1 rounded-full text-[11px] font-bold",
                         trendType === "up"
                             ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20"
-                            : "text-rose-400 bg-rose-500/10 border border-rose-500/20"
+                            : (trendType === "down"
+                                ? "text-rose-400 bg-rose-500/10 border border-rose-500/20"
+                                : "text-zinc-400 bg-zinc-500/10 border border-zinc-500/20")
                     )}>
                         <span>{trend}</span>
-                        {trendType === "up" ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                        {trendType === "up" ? <TrendingUp className="w-3 h-3" /> : (trendType === "down" ? <TrendingDown className="w-3 h-3" /> : null)}
                     </div>
                 </div>
             </CardContent>
